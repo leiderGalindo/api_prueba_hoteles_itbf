@@ -18,7 +18,8 @@ return [
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => [
-        'http://localhost:5173'
+        'http://localhost:5173',
+        'https://prueba-hoteles-itbf.vercel.app'
     ],
 
     'allowed_origins' => ['*'],
