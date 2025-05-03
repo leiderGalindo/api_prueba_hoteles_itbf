@@ -44,7 +44,7 @@ class HotelController extends Controller
         if($validator->fails()){
             return response()->json([
                 'error' => $validator->errors(),
-            ], 401);
+            ], 200);
         }
 
         try {
@@ -67,7 +67,7 @@ class HotelController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage(),
-            ], 401);
+            ], 200);
         }
     }
 
@@ -83,7 +83,7 @@ class HotelController extends Controller
         if($validator->fails()){
             return response()->json([
                 'error' => $validator->errors(),
-            ], 401);
+            ], 200);
         }
 
         try {
@@ -94,7 +94,7 @@ class HotelController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage(),
-            ], 401);
+            ], 200);
         }
     }
 
@@ -111,7 +111,7 @@ class HotelController extends Controller
         if($validator->fails()){
             return response()->json([
                 'error' => $validator->errors(),
-            ], 401);
+            ], 200);
         }
 
         try {
@@ -122,7 +122,7 @@ class HotelController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage(),
-            ], 401);
+            ], 200);
         }
     }
 
@@ -143,7 +143,7 @@ class HotelController extends Controller
         if($validator->fails()){
             return response()->json([
                 'error' => $validator->errors(),
-            ], 401);
+            ], 200);
         }
 
         try {
@@ -159,11 +159,12 @@ class HotelController extends Controller
 
             return response()->json([
                 'message' => 'Hotel actualizado correctamente',
+                'hotel' => $hotel
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage(),
-            ], 401);
+            ], 200);
         }
     }
 
@@ -184,7 +185,7 @@ class HotelController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage(),
-            ], 401);
+            ], 200);
         }
     }
 

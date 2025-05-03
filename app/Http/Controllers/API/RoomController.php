@@ -15,7 +15,7 @@ class RoomController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -41,7 +41,7 @@ class RoomController extends Controller
         if($validator->fails()){
             return response()->json([
                 'error' => $validator->errors(),
-            ], 401);
+            ], 200);
         }
 
         try {
@@ -66,7 +66,7 @@ class RoomController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage(),
-            ], 401);
+            ], 200);
         }
     }
 
@@ -75,7 +75,21 @@ class RoomController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            // Validamos si el hotel existe
+            $hotel = Hotel::where('id', $id)->first();
+            if(!$hotel) throw new \Exception('The hotel does not exist');
+            
+            // Obtenemos el numero de habitaciones actuales del hotel
+            $rooms = Room::where('hotel_id', $id)->get();
+
+            return response()->json($rooms, 200);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 200);
+        }
     }
 
     /**
@@ -101,12 +115,12 @@ class RoomController extends Controller
         if($validator->fails()){
             return response()->json([
                 'error' => $validator->errors(),
-            ], 401);
+            ], 200);
         }
 
         try {
             // Validar acomodacion a procesar
-            $response = $this->ValidateRoom($request);
+            $response = $this->ValidateRoom($request, $id);
             if(isset($response['error'])){
                 throw new \Exception($response['error']);
             }
@@ -127,7 +141,7 @@ class RoomController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage(),
-            ], 401);
+            ], 200);
         }
     }
 
@@ -148,7 +162,7 @@ class RoomController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage(),
-            ], 401);
+            ], 200);
         }
     }
 
@@ -159,7 +173,7 @@ class RoomController extends Controller
      * 
      * @return array|bool
     **/
-    public function ValidateRoom($request = null){ 
+    public function ValidateRoom($request = null, $id = false){ 
         if(!$request) return false;
 
         try {
@@ -170,7 +184,11 @@ class RoomController extends Controller
             if(!$hotel) throw new \Exception('The hotel does not exist');
             
             // Obtenemos el numero de habitaciones actuales del hotel
-            $currentNumberOfRooms = Room::where('hotel_id', $hotelId)->sum('quantity');
+            if(!$id){
+                $currentNumberOfRooms = Room::where('hotel_id', $hotelId)->sum('quantity');
+            }else{
+                $currentNumberOfRooms = Room::where('hotel_id', $hotelId)->where('id', '!=', $id)->sum('quantity');
+            }
             $roomsAvailable = ($hotel->number_of_rooms - $currentNumberOfRooms);
 
             // Validamos que aun existan habitaciones disponibles
@@ -196,10 +214,15 @@ class RoomController extends Controller
             }
 
             // Validamos que no exista un habitacion con las mismas caracteristicas
-            $room = Room::where('hotel_id', $hotelId)
+            $query = Room::where('hotel_id', $hotelId)
                 ->where('room_type', $request->input('room_type'))
-                ->where('accommodation', $request->input('accommodation'))
-                ->first();
+                ->where('accommodation', $request->input('accommodation'));
+                
+            if($id){
+                $query->where('id', '!=', $id);
+            }
+            
+            $room = $query->first();
             if($room) throw new \Exception('The room already exists');
             
         } catch (\Exception $e) {

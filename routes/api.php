@@ -33,7 +33,7 @@ Route::group([
     'middleware' => 'auth:api',
     'prefix' => 'rooms'
 ], function () {
-    Route::get('/', [RoomController::class, 'index']);
+    Route::get('/{id}', [RoomController::class, 'show']);
     Route::post('/', [RoomController::class, 'store']);
     Route::put('/{id}', [RoomController::class, 'update']);
     Route::delete('/{id}', [RoomController::class, 'destroy']);
